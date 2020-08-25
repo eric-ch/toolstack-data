@@ -24,7 +24,6 @@ XenClient.UI.VMModel = function(vm_path) {
     this.tools_installed = true;
     this.tools_version = "";
     this.cd = "";
-    this.gpu = "";
     this.mac = "";
     this.amt_pt = false;
     this.portica_enabled = 0; // 0 not installed, 1 installed and enabled, 2 installed and disabled
@@ -127,7 +126,6 @@ XenClient.UI.VMModel = function(vm_path) {
         ["description",                         interfaces.vm],
         ["image_path",                          interfaces.vm],
         ["cd",                                  interfaces.vm],
-        ["gpu",                                 interfaces.vm],
         ["amt_pt",                              interfaces.vm],
         ["memory",                              interfaces.vm],
         ["vcpus",                               interfaces.vm],
@@ -561,12 +559,7 @@ XenClient.UI.VMModel = function(vm_path) {
             if (self.startMultipleAction && !self.tools_installed && XUICache.runningVMCount() >= 2) {
                 fn = fn.decorate(self.startMultipleAction);
             }
-            // Warn about 3d graphics
-            if (self.isHdxEnabled() && self.startThreedAction) {
-                self.startThreedAction(fn);
-            } else {
-                fn();
-            }
+            fn();
         }
     };
 
@@ -710,14 +703,6 @@ XenClient.UI.VMModel = function(vm_path) {
         repository.load("download_progress", function() {
             self.publish(XenConstants.TopicTypes.MODEL_TRANSFER_CHANGED);
         });
-    };
-
-    this.isHdxEnabled = function() {
-        return (self.gpu != "");
-    };
-
-    this.isHdxRunning = function() {
-        return (self.isHdxEnabled() && self.isRunning());
     };
 
     this.isPublishEnabled = function() {
